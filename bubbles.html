@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<head>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #f0f0f0;
+        }
+
+        #message {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 24px;
+            font-family: Arial, sans-serif;
+            color: #333;
+        }
+
+        #danceButton {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        #danceButton:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+<div id="message">Have a good day!</div>
+<button id="danceButton">Blow bubbles!</button>
+
+<!-- Добавление сцены для трехмерного контента -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+    let scene, camera, renderer;
+    let bubbles = [];
+    let clock = new THREE.Clock();
+
+    function init() {
+        // Создаем сцену и камеру
+        scene = new THREE.Scene();
+        camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Камера движется от нас
+        camera.position.z = 2.5;
+
+
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+        directionalLight.position.set(7, 7, 7);
+        scene.add(directionalLight);
+
+        // Запуск анимации
+        animate();
+    }
+
+    // Функция для создания пузырей
+    function createBubbles() {
+        const numBubbles = 50; // Количество пузырей
+        for (let i = 0; i < numBubbles; i++) {
+            const geometry = new THREE.SphereGeometry(Math.random() * 0.2 + 0.1, 10, 10); // Разный размер пузырей
+            const material = new THREE.MeshStandardMaterial({
+                color: new THREE.Color(Math.random(), Math.random(), Math.random()), // Разные цвета
+                opacity: 0.8,
+                transparent: true,
+            });
+            const bubble = new THREE.Mesh(geometry, material);
+            bubble.position.set(
+                Math.random() * 6 - 3, // x
+                Math.random() * 6 - 3, // y
+            );
+            bubble.velocity = new THREE.Vector3(0, Math.random() * 0.01 + 0.02, 0); // Скорость подъема пузыря
+            scene.add(bubble);
+            bubbles.push(bubble);
+        }
+    }
+
+    // Функция анимации пузырей
+    function animate() {
+        requestAnimationFrame(animate);
+
+        const delta = clock.getDelta();
+
+        // Обновление пузырей (движение вверх и плавные изменения цвета)
+        bubbles.forEach(bubble => {
+            bubble.position.add(bubble.velocity); // Двигаем пузырь вверх
+
+            // Меняем цвет пузыря в процессе
+            bubble.material.color.setHSL((bubble.position.y + 2) / 6, 1.0, 0.5);
+        });
+
+        renderer.render(scene, camera);
+    }
+
+
+    // Запуск пузырей при нажатии кнопки
+    document.getElementById('danceButton').onclick = function () {
+        createBubbles();
+    };
+
+    init();
+</script>
+</body>
+</html>
