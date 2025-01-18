@@ -1,7 +1,6 @@
-# Общая задача: При пуше в ветку мастер отправлять все изменения на удаленный EC-2 веб-сервер и перезагружать nginx
 name: push-to-ec2
 
-# Событие, при котором сценарий запускается - пуш в ветку мастер
+# Событие, при котором сценарий запускается - пуш в ветку test
 on:
   push:
     branches:
@@ -16,22 +15,23 @@ jobs:
         # Проверка файлов в репозитории
       - name: Checkout files
         uses: actions/checkout@v4
+        
         # Подключаемся и скидываем файлы из репозитория в папку на EC2
       - name: Connect to EC2 and copy files from repo to TARGET
         uses: easingthemes/ssh-deploy@main
         env:
-                SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-                REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
-                REMOTE_USER: ${{ secrets.REMOTE_USER }}
-                TARGET: ${{ secrets.TARGET }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY_TEST }}
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST_TEST }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER_TEST }}
+          TARGET: ${{ secrets.TARGET_TEST }}
+
         # Переносим файлы в папку веб-сервера и перезагружаем nginx
       - name: Move files to the web-server directory and reload nginx
         uses: appleboy/ssh-action@master
         with:
-                host: ${{ secrets.REMOTE_HOST }}
-                username: ${{ secrets.REMOTE_USER }}
-                key: ${{ secrets.SSH_PRIVATE_KEY }}
-                script: |
-                        sudo mv /home/ubuntu/nobubbles.page/* /var/www/page-test/
-                        sudo systemctl reload nginx
-
+          host: ${{ secrets.REMOTE_HOST_TEST }}  # Используем REMOTE_HOST_TEST
+          username: ${{ secrets.REMOTE_USER_TEST }}  # Используем REMOTE_USER_TEST
+          key: ${{ secrets.SSH_PRIVATE_KEY_TEST }}  # Используем SSH_PRIVATE_KEY_TEST
+          script: |
+            sudo mv /home/ubuntu/nobubbles.page/* /var/www/page-test/
+            sudo systemctl reload nginx
