@@ -1,0 +1,42 @@
+name: merge-and-deploy-to-ec2
+
+
+on:
+   pull_request:
+	types:
+	   - merged
+
+jobs:
+   deploy:
+	runs-on: ubuntu-latest
+
+
+	steps:
+	    - name: checkout code
+	     uses: actions/checkout@v2
+
+
+	     -name: ensure merge was succesful
+	       run : |
+		     git fetch origin
+		     git checkout master
+		     git pull origin master
+		     git merge --no-off ${{ github.head_ref }}
+
+	    -name: deploy to server		
+	        uses:easingthemes/ssh-deploy@master
+		env:
+			SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+			REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+			REMOTE_USER: ${{ secrets.REMOTE_USER }}
+			TARGET: ${{ secrets.Target }}
+
+	    -name: reload nginx
+	    uses: appleboy/ssh-action@master
+	    with:
+		host: ${{ secrets.REMOTE_HOST }}
+		username: {{ secrets.REMOTE_USER }}
+		key: ${{ secrets.SSH_PRIVATE_KEY }}
+		script: |
+		     sudo systemctl reload nginx
+			
