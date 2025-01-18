@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snowfall Effect</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Отключаем прокрутку страницы */
+            height: 100vh;
+            background: #000000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            position: relative;
+        }
+
+        /* Стили для контейнера с кнопкой */
+        .button-container {
+            position: absolute;
+            bottom: 20px; /* Располагаем кнопку внизу страницы с отступом */
+        }
+
+        /* Стили для кнопки запуска */
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007BFF
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* Стили для кнопки при наведении */
+        button:hover {
+            background-color: #0056b3; /* Изменяем цвет фона при наведении */
+        }
+
+
+        .flowerflake {
+            position: absolute;
+            top: -50px;
+            font-size: 12px;
+            pointer-events: none; /* Отключаем взаимодействие с мышью */
+            animation: fall linear; /* Анимация падения */
+        }
+
+        /* Анимация падения  */
+        @keyframes fall {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg); /* Падаем вниз и вращаемся */
+                opacity: 0.2; /* Полупрозрачная у земли */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="button-container">
+        <button onclick="startflowerfall()">Запустить, для настроения :) </button>
+    </div>
+
+    <script>
+        function createflowerflake() {
+            const flowerflake = document.createElement('div'); // Создаём новый
+            flowerflake.classList.add('flowerflake');
+            flowerflake.textContent = '🌸';
+            flowerflake.style.left = Math.random() * window.innerWidth + 'px'; // Случайная горизонтальная позиция
+            flowerflake.style.animationDuration = Math.random() * 3 + 3 + 's'; // Случайная длительность анимации (3-6 секунд)
+            flowerflake.style.fontSize = Math.random() * 10 + 10 + 'px'; // Случайный размер (10-20px)
+
+            document.body.appendChild(flowerflake);
+
+            // Удаляем снежинку после завершения анимации
+            flowerflake.addEventListener('animationend', () => {
+                flowerflake.remove();
+            });
+        }
+
+        function startflowerfall() {
+            setInterval(createflowerflake, 200); // Создаём  каждые 200 мс
+        }
+    </script>
+</body>
+</html>
