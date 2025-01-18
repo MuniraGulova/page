@@ -32,5 +32,5 @@ jobs:
                 username: ${{ secrets.REMOTE_USER }}
                 key: ${{ secrets.SSH_PRIVATE_KEY }}
                 script: |
-                        sudo mv /home/ubuntu/bubbles.page/* /var/www/bubbles.page/
+                        sudo mv /home/ubuntu/bubbles.page/* /var/www/page-master/
                         sudo systemctl reload nginx
